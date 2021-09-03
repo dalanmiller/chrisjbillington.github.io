@@ -38,6 +38,22 @@ jobs:
             python aus_vax.py
             python aus_vax.py project
           fi
+      
+      - name: "Replace invalid 'book' value with 'normal' in SVGs"
+        run: find **/*.svg | xargs -I"{}" sed 's/\"book\"/\"normal\"/w {}' {}
+        
+      - name: "Remove invalid font-style=bold from SVGs"
+        run: find **/*.svg | xargs -I"{}" sed 's/font-style=\"bold\"//w {}' {}
+
+      - name: Install svgcleaner crate
+        uses: actions-rs/install
+        with:
+          crate: svgcleaner
+          version: latest
+          use-tool-cache: true
+
+      - name: "Optimize SVGs"
+        run: find **/*.svg | xargs -I"{}" svgcleaner {} {}
 
       - name: Git pull
         run: git pull --rebase --autostash
