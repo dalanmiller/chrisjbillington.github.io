@@ -1,4 +1,4 @@
-name: Vax Update 
+name: Vax Update
 
 on:
   workflow_dispatch:
@@ -32,12 +32,12 @@ jobs:
             python aus_vax.py
             python aus_vax.py project
           fi
-      
+
       - name: "Replace invalid 'book' value with 'normal' in SVGs"
-        run: find **/*.svg | xargs -I"{}" sed 's/\"book\"/\"normal\"/w {}' {}
-        
+        run: find **/*.svg | xargs sed -i 's/book/normal/g'
+
       - name: "Remove invalid font-style=bold from SVGs"
-        run: find **/*.svg | xargs -I"{}" sed 's/font-style=\"bold\"//w {}' {}
+        run: find **/*.svg | xargs sed -i 's/font-style=\"bold\"//g'
 
       - name: Install svgcleaner crate
         uses: actions-rs/install@v0.1
@@ -47,7 +47,7 @@ jobs:
           use-tool-cache: true
 
       - name: "Optimize SVGs"
-        run: find **/*.svg | xargs -I"{}" svgcleaner {} {}
+        run: find **/*.svg | xargs -P 0 -I"{}" svgcleaner {} {}
 
       - name: Git pull
         run: git pull --rebase --autostash
